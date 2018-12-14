@@ -135,6 +135,6 @@ if __name__ == '__main__':
     file = open('/Users/anubhavjain/Desktop/twitter_data_1.txt', 'a+')
 
     # This line filter Twitter Streams to capture data by the given keywords and on basis of the given location as india and languages as hindi and english:
-    stream.filter(track=['bjp', 'indian national congress', 'modi', 'rahul gandhi', 'bhartiya janta party'],locations=[68.1766451354, 7.96553477623, 97.4025614766, 35.4940095078],languages=['en','hi'],filter_level='low')
+    stream.filter(track=['bjp', 'indian national congress', 'modi', 'rahul gandhi', 'bhartiya janta party'],locations=[68.1766451354, 7.96553477623, 97.4025614766, 35.4940095078],languages=['en','hi','tl'],filter_level='low')
 
     file.close()
