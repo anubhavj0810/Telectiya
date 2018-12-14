@@ -15,10 +15,6 @@ import matplotlib.pyplot as plt
 
 
 #Variables that contains the user credentials to access Twitter API
-access_token = "911609571885633541-4EwvGuoHKFDlXSS22WC21wWOq8qqFse"
-access_token_secret = "aHsqcWUCce7rcrwh9e6vKQOwUJf2x30FXzQYbM81uMCmI"
-consumer_key = "DZBKOKfoWsshSYUe1NI3ba91I"
-consumer_secret = "WL3mlr7GudRbIkXRSB762MDrplwYPnAvdwXB5pwAgiYTeERNTR"
 
 tweets_data=[]
 
