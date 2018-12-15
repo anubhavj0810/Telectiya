@@ -41,11 +41,12 @@ class StdOutListener(StreamListener):
 
         tweets_twi=tweets_twi.append({'text':tweet['text']},ignore_index = True)
         #tweets_twi=pd.concat([pd.DataFrame([tweet['lang']], columns=['lang'])],ignore_index = True)
+        tweets_twi = tweets_twi.append({'lang': tweet['lang']}, ignore_index=True)
 
-        if(tweet['lang']=='tl'):
+        """if(tweet['lang']=='tl'):
             tweets_twi = tweets_twi.append({'lang': 'hi' }, ignore_index=True)
         else:
-            tweets_twi = tweets_twi.append({'lang': tweet['lang']}, ignore_index=True)
+            tweets_twi = tweets_twi.append({'lang': tweet['lang']}, ignore_index=True)"""
 
         if(tweet['place'] != None):
             tweets_twi=tweets_twi.append({'area':tweet['place']['name']},ignore_index = True)
@@ -122,7 +123,7 @@ if __name__ == '__main__':
 
     tweets_twi['text'] = list(map(lambda t: t['text'], tweets_data))
     tweets_twi['lang'] = list(map(lambda t: t['lang'], tweets_data))
-    tweets_twi['lang'] = tweets_twi['lang'].replace('tl','hi')   ### Added the hindi semantics written in English to the lang hindi
+    #tweets_twi['lang'] = tweets_twi['lang'].replace('tl','hi')   ### Added the hindi semantics written in English to the lang hindi
     tweets_twi['area'] = list(map(lambda t: t['place']['name'] if (t['place'] != None) else None, tweets_data))
     tweets_twi['country'] = list(map(lambda t: t['place']['country'] if (t['place'] != None) else None, tweets_data))
 
