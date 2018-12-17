@@ -1,3 +1,9 @@
+Relevant Features which can be extracted for the tweets of the political parties latest X (where we can decide the value of X)tweets.
+
+Also all the account activity can be monitored using one app itself.
+
+Data for each political party is stored in different file.
+
 "favorite_count" , "retweet_count"
 "lang"
 "text"
