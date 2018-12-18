@@ -1,46 +1,65 @@
 import twitter
+import json
 import numpy as np
 import pandas as pd
 import time
 
 
-api=twitter.Api()
+api=twitter.Api(access_token_key= ACCESS_KEY,
+access_token_secret = ACCESS_SECRET,
+consumer_key = CONSUMER_KEY,
+consumer_secret = CONSUMER_SECRET
+)
 
-def Random_tweet(string,tweet_array): # Writing random tweets into a file from each politician id
+from TwitterSearch import *
+
+def Random_tweet(string,tweet): # Writing random tweet from latest 25 into a file from each politician id
     file.write(string + "'s" + " tweet \n\n")
-    file.write(str(tweet_array[np.random.randint(20)]))
+    file.write(str(tweet))
     file.write("\n\n\n")
 
-def Crawl_party(string,no_tweets): # Crawling the latest X tweets from the politician id
+def Crawl_party(string): # Crawling the latest X tweets from the politician id
 
     user_info=api.GetUser(screen_name=string)
     user_info=user_info.AsDict()
-    print(user_info)
+    print(user_info["screen_name"])
 
-    print("Writing last " + str(no_tweets) + " tweets...")
-    print()
+    print("Extracting latest tweets...")
 
     f=open('/Users/anubhavjain/Desktop/Politicians_Parties/'+ string +'.txt','w+')
 
-    count=0
-    tweet_array=np.array(api.GetUserTimeline(screen_name=string))
-    f.writelines(str(tweet_array))
-    maxid=str(tweet_array[len(tweet_array)-1].id - 1)
-    count+=len(tweet_array)
+    try:
+        tuo = TwitterUserOrder(string)  # create a TwitterUserOrder
 
-    Random_tweet(string,tweet_array)
+        """tso = TwitterSearchOrder()
 
-    while(count < no_tweets):
-        try:
-            tweet_array = np.array(api.GetUserTimeline(screen_name=string,max_id=maxid))
-            time.sleep(0.0000001)
-            f.writelines(str(tweet_array))
-            count += len(tweet_array)
-            maxid = str(tweet_array[len(tweet_array) - 1].id - 1)
+        tso.set_keywords(['BJP', 'INC', 'AAP'])  # let's define all words we would like to have a look for
+        tso.set_language(lang='en')
+        tso.set_include_entities(False)"""
 
-        except Exception as e:
-            print(e)
-            pass
+        # it's about time to create TwitterSearch object again
+        ts = TwitterSearch(consumer_key=CONSUMER_KEY, consumer_secret=CONSUMER_SECRET, access_token=ACCESS_KEY,
+                           access_token_secret=ACCESS_SECRET)
+
+        """for tweet in ts.search_tweets_iterable(tso):
+            print('@%s tweeted: %s' % (tweet['user']['screen_name'], tweet['text']))"""
+
+        # start asking Twitter about the timeline
+
+        ran = np.random.randint(25)
+        count = 0
+        for tweet in ts.search_tweets_iterable(tuo):
+            count += 1
+            f.write(str(tweet) + "\n")
+
+            if(count==ran):
+                Random_tweet(string,tweet)
+            #print( '@%s tweeted: %s' % ( tweet['user']['screen_name'], tweet['text'] ) )
+
+        print("Extracted latest",str(count),"tweets")
+
+    except TwitterSearchException as e:  # catch all those ugly errors
+        print(e)
 
     f.close()
 
@@ -48,8 +67,15 @@ def Crawl_party(string,no_tweets): # Crawling the latest X tweets from the polit
 file=open('/Users/anubhavjain/Desktop/Politicians_Parties/random_tweet_part.txt',"w+")
 f1=open('/Users/anubhavjain/Desktop/Politicians_Parties/web_scrape.txt',"r")
 
+
+t_before=time.time()
 for line in f1:
-    Crawl_party(line,3200)
+    Crawl_party(line)
+t_after = time.time()
+
+print("Time taken to extract is ...")
+print(t_after - t_before)
+print()
 
 f1.close()
 file.close()
