@@ -1,3 +1,5 @@
+The best point of this API is that it is much much faster to crawl data from this than Streaming API as the Streaming API has to check whether the tweet coming in the stream belongs to the given ID or not.And if not it discards it and checks the next one.Wherease in this API it will extract only the tweets from the given ID's Homeline.
+
 The account activity can be monitored using one app itself i.e no need to create different apps for different political parties.
 
 Dataset(tweets) for each political party is stored in different file.
