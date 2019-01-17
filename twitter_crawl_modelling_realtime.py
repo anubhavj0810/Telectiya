@@ -5,7 +5,7 @@ from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
 from wordcloud import WordCloud
-from urllib3.exceptions import ProtocolError
+from urllib3.exceptions import ProtocolError,ReadTimeoutError
 
 import re
 import json
@@ -15,11 +15,13 @@ import numpy as np
 import datetime as dt
 import multiprocessing
 from multiprocessing import Process
+import sys
 
-
+print("Default encoding is .. ",sys.getdefaultencoding())
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
+# Variables that contains the user credentials to access Twitter API
 
 # This is a basic listener that just prints received tweets to stdout.
 
@@ -38,15 +40,15 @@ politics1 = ['bjp', 'aap', 'bhajpaa', 'bhartiya janata party', 'aam aadmi party'
            'JDS', 'Communist Party of India', 'Communist Party of India- Marxist', 'CPI-M', 'CPI']
 
 
-choices = ['CONGRESS', 'BJP', 'AAP', 'BHAJPAA', 'BHARTIYA JANATA PARTY', 'AAM AADMI PARTY', 'BAHUJAN SAMAJ PARTY', 'BSP', 'SAMAJWADI PARTY', 'SP', 'AIADMK', 'DMK', 'TRINAMOOL CONGRESS', 'SHIV SENA', 'NATIONALIST CONGRESS PARTY', 'BIJU JANATA DAL', 'JANATA DAL UNITED', 'JDU', 'RASTRIYA JANATA DAL', 'RJD', 'JDS', 'COMMUNIST PARTY OF INDIA', 'COMMUNIST PARTY OF INDIA- MARXIST', 'CPI-M', 'CPI']
-choices_party = ['INC', 'BJP', 'AAP', 'BJP', 'BJP', 'AAP', 'BSP', 'BSP', 'SP', 'SP', 'AIADMK', 'DMK',
+choices = ['CONGRESS', 'BJP', 'AAP','#AAP','@AAP', 'BHAJPAA', 'BHARTIYA JANATA PARTY', 'AAM AADMI PARTY', 'BAHUJAN SAMAJ PARTY', 'BSP', 'SAMAJWADI PARTY', 'SP','@SP','#SP','AIADMK', 'DMK', 'TRINAMOOL CONGRESS', 'SHIV SENA', 'NATIONALIST CONGRESS PARTY', 'BIJU JANATA DAL', 'JANATA DAL UNITED', 'JDU', 'RASTRIYA JANATA DAL', 'RJD','#RJD','@RJD', 'JDS','#JDS','@JDS','COMMUNIST PARTY OF INDIA', 'COMMUNIST PARTY OF INDIA- MARXIST', 'CPI-M', 'CPI','#CPI','@CPI']
+choices_party = ['INC', 'BJP', 'AAP', 'AAP', 'AAP', 'BJP', 'BJP', 'AAP', 'BSP', 'BSP', 'SP', 'SP', 'SP', 'SP', 'AIADMK', 'DMK',
                  'Trinamool Congress', 'Shiv Sena', 'Nationalist Congress Party', 'Biju Janata Dal',
-                 'Janata Dal United', 'Janata Dal United', 'Rastriya Janata Dal', 'Rastriya Janata Dal', 'JDS', 'CPI-M',
-                 'CPI', 'CPI-M', 'CPI']
+                 'Janata Dal United', 'Janata Dal United', 'Rastriya Janata Dal', 'Rastriya Janata Dal', 'Rastriya Janata Dal', 'Rastriya Janata Dal', 'JDS', 'JDS', 'JDS',
+                 'CPI', 'CPI-M', 'CPI-M', 'CPI', 'CPI', 'CPI']
 choices_party1 = dict(zip(choices_party, [0 for i in range(len(choices_party))]))
 choices_party_live = dict(zip(choices_party, [0 for i in range(len(choices_party))]))
 
-pattern1 = "(?i) congress | bjp | aap | bhajpaa | bhartiya janata party | aam aadmi party,bahujan samaj party | BSP | Samajwadi Party | SP | AIADMK | DMK | Trinamool Congress | Shiv Sena,Nationalist Congress Party | Biju Janata Dal | Janata Dal United | JDU | Rastriya Janata Dal | RJD,JDS | Communist Party of India | Communist Party of India- Marxist | CPI-M | CPI "
+pattern1 = "(?i)congress|bjp| aap |#aap|@aap|bhajpaa|bhartiya janata party|aam aadmi party|bahujan samaj party|BSP|Samajwadi Party| SP |@SP|#SP|AIADMK|DMK|Trinamool Congress|Shiv Sena|Nationalist Congress Party|Biju Janata Dal|Janata Dal United|JDU|Rastriya Janata Dal| RJD |#RJD|@RJD|JDS|#JDS|@JDS|Communist Party of India|Communist Party of India- Marxist|CPI-M| CPI |#CPI|@CPI"
 politics.extend(politics1)
 
 
@@ -120,7 +122,7 @@ def Hastag_extract(tweets_array):
 
     for i in tweets_array:
         try:
-            ht = re.findall("#[\w]*", i.encode('ascii', 'ignore').decode('ascii'))
+            ht = re.findall("#[\w]*", i.encode('ascii','ignore').decode('ascii'))
             hashtag.extend(ht)
         except Exception:
             pass
@@ -216,7 +218,7 @@ def Modelling_data(tweets_twitter,ax,ax1,ax2,ax3,title1,title2,title3,title4):
         f.write("Tweet Count till now .. \n")
         f.write(str(tweet_count))
         f.write("\n\n"+ title1 +"\n")
-        f.writelines(str(tweets_by_lang[:3]).encode('ascii', 'ignore').decode('ascii'))
+        f.writelines(str(tweets_by_lang[:3]).encode('ascii','ignore').decode('ascii'))
         f.close()
 
     tweets_by_country = tweets_twitter['country'].value_counts()
@@ -231,7 +233,7 @@ def Modelling_data(tweets_twitter,ax,ax1,ax2,ax3,title1,title2,title3,title4):
 
         f = open('/Users/anubhavjain/Desktop/Contents_twitter.txt', 'a+')
         f.write("\n\n"+ title2 +"\n")
-        f.writelines(str(tweets_by_country[:5]).encode('ascii', 'ignore').decode('ascii'))
+        f.writelines(str(tweets_by_country[:5]).encode('ascii','ignore').decode('ascii'))
         f.close()
 
     tweets_by_loc = tweets_twitter['user_loc'].value_counts()
@@ -246,7 +248,7 @@ def Modelling_data(tweets_twitter,ax,ax1,ax2,ax3,title1,title2,title3,title4):
 
         f = open('/Users/anubhavjain/Desktop/Contents_twitter.txt', 'a+')
         f.write("\n\n"+ title3 +"\n")
-        f.writelines(str(tweets_by_loc[:5]).encode('ascii', 'ignore').decode('ascii'))
+        f.writelines(str(tweets_by_loc[:5]).encode('ascii','ignore').decode('ascii'))
         f.close()
 
     tweets_by_username = tweets_twitter['username'].value_counts()
@@ -261,7 +263,7 @@ def Modelling_data(tweets_twitter,ax,ax1,ax2,ax3,title1,title2,title3,title4):
 
         f = open('/Users/anubhavjain/Desktop/Contents_twitter.txt', 'a+')
         f.write("\n\n"+ title4 +"\n")
-        f.writelines(str(tweets_by_username[:5]).encode('ascii', 'ignore').decode('ascii'))
+        f.writelines(str(tweets_by_username[:5]).encode('ascii','ignore').decode('ascii'))
         f.close()
 
 class StdOutListener(StreamListener):
@@ -432,7 +434,7 @@ if __name__ == '__main__':
         f.write("Printing random tweet along with its features ....\n\n")
         for i in tweets_data[np.random.randint(len(tweets_data),size=None)].items():
             str_temp = str(i) + "\n\n"
-            str_temp = str_temp.encode('ascii', 'ignore').decode('ascii')
+            str_temp = str_temp.encode('ascii','ignore').decode('ascii')
             f.write(str_temp)
         f.close()
 
@@ -509,5 +511,5 @@ if __name__ == '__main__':
         try:
             stream.filter(track=politics, locations=[68.1766451354, 7.96553477623, 97.4025614766, 35.4940095078],
                            languages=['en', 'hi', 'tl'], filter_level='low')
-        except (ProtocolError, AttributeError):
+        except (ProtocolError, AttributeError,ReadTimeoutError):
             continue;
